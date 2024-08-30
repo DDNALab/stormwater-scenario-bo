@@ -38,6 +38,15 @@ def get_file_list(html):
     files = [a['href'] for a in soup.find_all('a') if a['href'].endswith('.nc')]
     return files
 
+# Function to select the latest version of files
+def select_latest_versions(files):
+    file_dict = {}
+    for file in files:
+        base_name = file.rsplit('_', 1)[0]  # Remove version and extension
+        if base_name not in file_dict or file > file_dict[base_name]:
+            file_dict[base_name] = file
+    return list(file_dict.values())
+
 # Create directories and download files
 for model in models:
     for scenario in scenarios:
@@ -48,7 +57,8 @@ for model in models:
         response = requests.get(file_list_url)
         if response.status_code == 200:
             files = get_file_list(response.text)
-            for file_name in files:
+            latest_files = select_latest_versions(files)
+            for file_name in latest_files:
                 file_url = f"{path}{file_name}"
                 save_path = os.path.join("data", model, scenario, run, variable, file_name)
                 os.makedirs(os.path.dirname(save_path), exist_ok=True)
