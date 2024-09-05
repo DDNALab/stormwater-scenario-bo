@@ -5,8 +5,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
-# Base URL for the data
-base_url = "https://ds.nccs.nasa.gov/thredds/fileServer/AMES/NEX/GDDP-CMIP6"
+base_url = "https://ds.nccs.nasa.gov/thredds/catalog/AMES/NEX/GDDP-CMIP6"
 
 # Models and scenarios to download data from
 models = [
