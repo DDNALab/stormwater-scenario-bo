@@ -5,6 +5,8 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
+# Base URL for the data
+
 base_url = "https://ds.nccs.nasa.gov/thredds/catalog/AMES/NEX/GDDP-CMIP6"
 
 # Models and scenarios to download data from
@@ -18,7 +20,7 @@ models = [
     "NESM3", "NorESM2-LM", "NorESM2-MM", "TaiESM1", "UKESM1-0-LL"
 ]
 scenarios = ["historical", "ssp245", "ssp370", "ssp585"]
-run = "r1i1p1f1"
+runs = ["r1i1p1f1","r1i1p1f2","r4i1p1f1"]
 variable = "pr"
 
 # Function to download a file from a URL
@@ -49,18 +51,19 @@ def select_latest_versions(files):
 # Create directories and download files
 for model in models:
     for scenario in scenarios:
-        path = f"{base_url}/{model}/{scenario}/{run}/{variable}/"
-        file_list_url = f"{base_url}/{model}/{scenario}/{run}/{variable}/catalog.html"
+        for run in runs:
+            path = f"{base_url}/{model}/{scenario}/{run}/{variable}/"
+            file_list_url = f"{base_url}/{model}/{scenario}/{run}/{variable}/catalog.html"
         
         # Get the HTML content of the file list page
-        response = requests.get(file_list_url)
-        if response.status_code == 200:
-            files = get_file_list(response.text)
-            latest_files = select_latest_versions(files)
-            for file_name in latest_files:
-                file_url = f"{path}{file_name}"
-                save_path = os.path.join("data", model, scenario, run, variable, file_name)
-                os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                download_file(file_url, save_path)
-        else:
-            print(f"Failed to access {file_list_url}")
+            response = requests.get(file_list_url)
+            if response.status_code == 200:
+                files = get_file_list(response.text)
+                latest_files = select_latest_versions(files)
+                for file_name in latest_files:
+                    file_url = f"{path}{file_name}"
+                    save_path = os.path.join("data", model, scenario, run, variable, file_name)
+                    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+                    download_file(file_url, save_path)
+            else:
+                print(f"Failed to access {file_list_url}")
