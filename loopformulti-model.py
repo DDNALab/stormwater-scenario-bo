@@ -18,7 +18,7 @@ sub_folders = ['historical', 'ssp245', 'ssp370', 'ssp585']
 defined_lat = 23
 defined_lon = 113
 
-# 函数：加载、合并并提取给定子文件夹的降水数据
+# Function to load, concatenate, and extract precipitation data for a given sub-folder
 def load_and_extract_pr(model_dir, sub_folder):
     # access .nc
     file_paths = glob.glob(os.path.join(model_dir, sub_folder, '*.nc'))
